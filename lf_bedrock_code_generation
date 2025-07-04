@@ -19,16 +19,11 @@ def generate_code_using_bedrock(message:str, language:str) ->str:
     }
 
     try:
-        print("1")
         bedrock = boto3.client("bedrock-runtime", region_name="us-east-1", config=botocore.config.Config(read_timeout=300, retries = {'max_attempts':3}))
-        print("2")
         response = bedrock.invoke_model(modelId="anthropic.claude-v2:1", body=json.dumps(body), contentType="application/json", accept="application/json")
         traceback.print_exc()
-        print("3")
         response_content = response.get("body").read().decode("utf-8")
-        print("4")
         response_data = json.loads(response_content)
-        print("5")
         code = response_data["completion"].strip()
         return code
     except Exception as e:
@@ -69,8 +64,6 @@ def lambda_handler(event, context):
         }
     except Exception as e:
         print(f"Error: {e}")
-        import traceback
-        traceback.print_exc()
         return {
             'statusCode': 500,
             'body': json.dumps({'Error generating code.': str(e)})
